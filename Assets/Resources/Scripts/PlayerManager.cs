@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEditor;
 
-public class PlayerManager_2 : MonoBehaviour {
+public class PlayerManager : MonoBehaviour {
 
     public float speedX;
     public float jumpSpeedY;
@@ -43,7 +43,7 @@ public class PlayerManager_2 : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W))
         {
             //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
-            anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Robot", typeof(RuntimeAnimatorController)));
+            //anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Robot", typeof(RuntimeAnimatorController)));
 
         }
 

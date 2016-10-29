@@ -1,39 +1,52 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
-public class PlayerManager : MonoBehaviour
-{
+public class PlayerManagerExperimental : MonoBehaviour {
 
-    public float speedX;
-    public float jumpSpeedY;
-    public bool IsDubleJumpAllowed;
-    public float delayBeforeDoubleJump;
-
+    public float speedX = 8;
+    public float jumpSpeedY = 400;
+    public float delayBeforeDoubleJump = 0.01f;
+    public GameObject leftBullet, rightBullet;
+    
     float speed;
-    bool isFacingRight, isJumping, isOnTheGround, canDubleJump;
+    bool isFacingRight, isJumping, isOnTheGround, canDoubleJump;
 
+    Transform firePos;
     Animator anim;
     Rigidbody2D rb;
 
     // Use this for initialization
-    void Start()
-    {
+    void Start () {
+       
         anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        
+       rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
-    }
+        firePos = transform.FindChild("firePos");
 
-    // Update is called once per frame
-    void Update()
-    {
-        MovePlayer(speed); // moves the player
-        Flip(); // flips the player if needed
+    }
+	
+	// Update is called once per frame
+	void Update () {
+
+        MovePlayer(speed);
+        Flip();
 
         // if Left arrow is pressed it sets the speed varible to negative speed
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
+            //anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot..controller") as RuntimeAnimatorController;
             speed = -speedX + Time.deltaTime;
         }
+        // if Left arrow is pressed it sets the speed varible to negative speed
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
+            anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Robot", typeof(RuntimeAnimatorController)));
+
+        }
+
         // if Left arrow is not pressed sets speed varible to 0
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
@@ -45,6 +58,7 @@ public class PlayerManager : MonoBehaviour
         {
             speed = speedX + Time.deltaTime;
         }
+
         // if Right arrow is not pressed sets speed varible to 0
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
@@ -52,16 +66,19 @@ public class PlayerManager : MonoBehaviour
         }
 
         // if Up arrow key is pressed we set the jump animation and invoke the jump function
-        if (Input.GetKeyDown(KeyCode.UpArrow) && (isOnTheGround == true || (IsDubleJumpAllowed && canDubleJump)))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isOnTheGround)
         {
-            PlayerJump(); // makeing the player jump
+            PlayerJump();
         }
 
-        // if Space is pressed we play Attack animation
+        if (Input.GetKeyDown(KeyCode.UpArrow) && canDoubleJump)
+        {
+            PlayerJump();
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            anim.SetInteger("State", 3);
-
+            Fire();
         }
     }
 
@@ -101,53 +118,48 @@ public class PlayerManager : MonoBehaviour
         if (colision.gameObject.tag == "Ground")
         {
             isOnTheGround = true;
-            //canDubleJump = false;
-
             isJumping = false;
+            canDoubleJump = false;
             anim.SetInteger("State", 0);
         }
-
-        if (colision.gameObject.tag == "untagged")
-        {
-            isJumping = false;
-            anim.SetInteger("state", 0);
-        }
-
     }
 
-    private void PlayerJump()
+    void PlayerJump()
     {
-        // executes single jump
+        // single jump
         if (isOnTheGround)
         {
             isOnTheGround = false;
             isJumping = true;
-
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
             Invoke("EnablePlayerDoubleJump", delayBeforeDoubleJump);
         }
 
-        // executes double jump if enabled
-        if (canDubleJump)
+        // double jump
+        if (canDoubleJump)
         {
-            canDubleJump = false;
-            //float doubleJumpSpeed = jumpSpeedY;
-            //if (rb.velocity.y < 0)
-            //{
-            //    //Debug.Log(jumpSpeedY);
-            //    doubleJumpSpeed = jumpSpeedY + (rb.velocity.y * -1 * rb.gravityScale);
-            //}
+            canDoubleJump = false;
+            rb.velocity = new Vector2(rb.velocity.x,0);
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
         }
     }
 
-    private void EnablePlayerDoubleJump()
+    void EnablePlayerDoubleJump()
     {
-        if (IsDubleJumpAllowed)
+            canDoubleJump = true;
+    }
+
+    void Fire()
+    {
+        if (isFacingRight)
         {
-            canDubleJump = true;
+            Instantiate(rightBullet, firePos.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(leftBullet, firePos.position, Quaternion.identity);
         }
     }
 }
