@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManagerOld : MonoBehaviour
 {
 
     public float speedX;
