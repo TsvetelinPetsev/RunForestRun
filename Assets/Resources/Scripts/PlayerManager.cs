@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W))
         {
             //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
-            anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Animations/NinjaBoy/NinjaBoy", typeof(RuntimeAnimatorController)));
+            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
 
         }
 
