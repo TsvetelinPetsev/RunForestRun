@@ -16,6 +16,7 @@ public class PlayerManager : MonoBehaviour {
     Animator anim;
     Rigidbody2D rb;
 
+
     // Use this for initialization
     void Start () {
        
@@ -122,6 +123,11 @@ public class PlayerManager : MonoBehaviour {
             isJumping = false;
             canDoubleJump = false;
             anim.SetInteger("State", 0);
+        }
+
+        if (colision.gameObject.tag == "Through")
+        {
+            gameObject.transform.position = new Vector3(217.5f, 7.554f, 0f); 
         }
     }
 
