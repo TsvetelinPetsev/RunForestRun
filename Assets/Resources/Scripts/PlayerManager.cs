@@ -147,6 +147,7 @@ public class PlayerManager : MonoBehaviour {
         if (canDoubleJump)
         {
             canDoubleJump = false;
+            rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
         }

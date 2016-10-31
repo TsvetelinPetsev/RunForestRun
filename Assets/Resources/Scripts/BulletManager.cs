@@ -26,5 +26,12 @@ public class BulletManager : MonoBehaviour {
             Destroy(other.gameObject);
             Destroy(gameObject);
         }
+
+        if (other.gameObject.CompareTag("Barrel"))
+        {
+            ParticleSystem exp = other.gameObject.GetComponent<ParticleSystem>();
+            exp.Play();
+            Destroy(other.gameObject, 0.1f);
+        }
     }
 }

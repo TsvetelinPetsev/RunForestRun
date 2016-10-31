@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class MenuController : MonoBehaviour {
 
     private bool isPaused;
-    public Button btnPause, btnPlay;
+    public Button btnPause, btnPlay, btnHome;
 
 	// Use this for initialization
 	void Start () {
