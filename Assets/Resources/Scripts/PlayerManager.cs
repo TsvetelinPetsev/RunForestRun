@@ -4,11 +4,12 @@ using UnityEditor;
 
 public class PlayerManager : MonoBehaviour {
 
-    public float speedX;
-    public float jumpSpeedY;
-    public float delayBeforeDoubleJump;
+
+    public float speedX = 5;
+    public float jumpSpeedY = 300;
+    //public float delayBeforeDoubleJump = 0.01f;
     public GameObject leftBullet, rightBullet;
-    
+
     float speed;
     bool isFacingRight, isJumping, isOnTheGround, canDoubleJump;
 
@@ -16,20 +17,23 @@ public class PlayerManager : MonoBehaviour {
     Animator anim;
     Rigidbody2D rb;
 
+    bool isRobot = true;
 
     // Use this for initialization
-    void Start () {
-       
+    void Start()
+    {
+
         anim = GetComponent<Animator>();
-        
-       rb = GetComponent<Rigidbody2D>();
+
+        rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         firePos = transform.FindChild("firePos");
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
 
         MovePlayer(speed);
         Flip();
@@ -40,14 +44,7 @@ public class PlayerManager : MonoBehaviour {
             //anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot..controller") as RuntimeAnimatorController;
             speed = -speedX + Time.deltaTime;
         }
-        // if Left arrow is pressed it sets the speed varible to negative speed
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
-            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
-
-        }
-
+        
         // if Left arrow is not pressed sets speed varible to 0
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
@@ -79,8 +76,27 @@ public class PlayerManager : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            anim.SetInteger("State", 3);
+
             Fire();
+        }
+
+        // change character
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
+            //anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Animations/NinjaBoy/NinjaBoy", typeof(RuntimeAnimatorController)));
+            if (isRobot)
+            {
+                isRobot = false;
+                anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
+            }
+            else
+            {
+                isRobot = true;
+                anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot") as RuntimeAnimatorController;
+            }
+
+
         }
     }
 
@@ -125,10 +141,14 @@ public class PlayerManager : MonoBehaviour {
             anim.SetInteger("State", 0);
         }
 
+        // door teleport TODO:FIX
         if (colision.gameObject.tag == "Through")
         {
-            gameObject.transform.position = new Vector3(217.5f, 7.554f, 0f); 
+            gameObject.transform.position = new Vector3(217.5f, 7.554f, 0f);
         }
+
+
+
     }
 
     void PlayerJump()
@@ -140,7 +160,7 @@ public class PlayerManager : MonoBehaviour {
             isJumping = true;
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
-            Invoke("EnablePlayerDoubleJump", delayBeforeDoubleJump);
+            Invoke("EnablePlayerDoubleJump", 0.01f);
         }
 
         // double jump
@@ -155,7 +175,7 @@ public class PlayerManager : MonoBehaviour {
 
     void EnablePlayerDoubleJump()
     {
-            canDoubleJump = true;
+        canDoubleJump = true;
     }
 
     void Fire()

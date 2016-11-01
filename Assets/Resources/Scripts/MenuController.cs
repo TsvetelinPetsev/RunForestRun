@@ -8,24 +8,8 @@ public class MenuController : MonoBehaviour {
     private bool isPaused;
     public Button btnPause, btnPlay, btnHome;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
 	// Update is called once per frame
 	void Update () {
-	
-	}
-
-    public void LoadScene(string sceneName)
-    {
-        SceneManager.LoadSceneAsync(sceneName);
-    }
-
-    public void Pause ()
-    {
-        isPaused = !isPaused;
         if (isPaused)
         {
             Time.timeScale = 0;
@@ -34,9 +18,26 @@ public class MenuController : MonoBehaviour {
         }
         else
         {
-            Time.timeScale = 1;
+            Time.timeScale = 1;            
             btnPause.interactable = true;
             btnPlay.interactable = false;
         }
+	}
+
+    public void LoadScene(string sceneName)
+    {
+        SceneManager.LoadSceneAsync(sceneName);
     }
+
+    public void Play()
+    {
+        isPaused = false;
+    }
+
+    public void Pause()
+    {
+        isPaused = true;
+
+    }
+    
 }

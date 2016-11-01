@@ -2,13 +2,14 @@
 using System.Collections;
 using UnityEditor;
 
-public class PlayerManagerExperimental : MonoBehaviour {
+public class PlayerManagerExperimental : MonoBehaviour
+{
 
-    public float speedX = 8;
-    public float jumpSpeedY = 400;
+    public float speedX = 5;
+    public float jumpSpeedY = 300;
     public float delayBeforeDoubleJump = 0.01f;
     public GameObject leftBullet, rightBullet;
-    
+
     float speed;
     bool isFacingRight, isJumping, isOnTheGround, canDoubleJump;
 
@@ -16,19 +17,22 @@ public class PlayerManagerExperimental : MonoBehaviour {
     Animator anim;
     Rigidbody2D rb;
 
+
     // Use this for initialization
-    void Start () {
-       
+    void Start()
+    {
+
         anim = GetComponent<Animator>();
-        
-       rb = GetComponent<Rigidbody2D>();
+
+        rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         firePos = transform.FindChild("firePos");
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
 
         MovePlayer(speed);
         Flip();
@@ -43,8 +47,8 @@ public class PlayerManagerExperimental : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W))
         {
             //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
-            anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Robot", typeof(RuntimeAnimatorController)));
-
+            //anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Animations/NinjaBoy/NinjaBoy", typeof(RuntimeAnimatorController)));
+            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
         }
 
         // if Left arrow is not pressed sets speed varible to 0
@@ -78,6 +82,7 @@ public class PlayerManagerExperimental : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+
             Fire();
         }
     }
@@ -122,6 +127,16 @@ public class PlayerManagerExperimental : MonoBehaviour {
             canDoubleJump = false;
             anim.SetInteger("State", 0);
         }
+
+        // door teleport TODO:FIX
+        if (colision.gameObject.tag == "Through")
+        {
+            gameObject.transform.position = new Vector3(217.5f, 7.554f, 0f);
+        }
+
+
+
+
     }
 
     void PlayerJump()
@@ -140,7 +155,7 @@ public class PlayerManagerExperimental : MonoBehaviour {
         if (canDoubleJump)
         {
             canDoubleJump = false;
-            rb.velocity = new Vector2(rb.velocity.x,0);
+            rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
         }
@@ -148,7 +163,7 @@ public class PlayerManagerExperimental : MonoBehaviour {
 
     void EnablePlayerDoubleJump()
     {
-            canDoubleJump = true;
+        canDoubleJump = true;
     }
 
     void Fire()
@@ -163,3 +178,4 @@ public class PlayerManagerExperimental : MonoBehaviour {
         }
     }
 }
+
