@@ -15,13 +15,14 @@ public class CoinManager : MonoBehaviour {
         }
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnTriggerEnter2D(Collider2D colision)
     {   
-        if (other.gameObject.CompareTag("Coin"))
+        if (colision.gameObject.CompareTag("Coin"))
         {
+            Debug.Log("Triggered");
             money++;
             GameObject.Find("MoneyTxt").GetComponent<Text>().text = money.ToString();
-            Destroy(other.gameObject);
+            Destroy(colision.gameObject);
         }
     }
 }

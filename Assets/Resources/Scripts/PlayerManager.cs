@@ -132,6 +132,7 @@ public class PlayerManager : MonoBehaviour {
     // if player colide with something
     void OnCollisionEnter2D(Collision2D colision)
     {
+        anim = GetComponent<Animator>();
         // if player hits the ground we change the animation and state
         if (colision.gameObject.tag == "Ground")
         {
@@ -159,6 +160,7 @@ public class PlayerManager : MonoBehaviour {
             isOnTheGround = false;
             isJumping = true;
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
+            
             anim.SetInteger("State", 2);
             Invoke("EnablePlayerDoubleJump", 0.01f);
         }

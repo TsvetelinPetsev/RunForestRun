@@ -19,19 +19,12 @@ public class BulletManager : MonoBehaviour {
         rb.velocity = speed;
 	}
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D colision)
     {
-        if (other.gameObject.CompareTag("Ground"))
+        if (colision.gameObject.CompareTag("Ground"))
         {
-            Destroy(other.gameObject);
+            Destroy(colision.gameObject);
             Destroy(gameObject);
-        }
-
-        if (other.gameObject.CompareTag("Barrel"))
-        {
-            ParticleSystem exp = other.gameObject.GetComponent<ParticleSystem>();
-            exp.Play();
-            Destroy(other.gameObject, 0.1f);
         }
     }
 }
