@@ -7,17 +7,13 @@ public class HealthManager : MonoBehaviour {
 
     public GameObject[] Hearts;
     private int health;
-    private int money;
 
 	// Use this for initialization
 	void Start () {
         health = Hearts.Length;
 	}
 	
-	// Update is called once per frame
-	void Update () {
 	
-	}
 
     void OnCollisionEnter2D(Collision2D other)
     {
@@ -30,12 +26,6 @@ public class HealthManager : MonoBehaviour {
         {
             SceneManager.LoadSceneAsync("Sci_Fi_Scene");
         }
-
-        if (other.gameObject.CompareTag("Coin"))
-        {
-            money++;
-            GameObject.Find("MoneyTxt").GetComponent<Text>().text = money.ToString();
-            Destroy(other.gameObject);
-        }
+       
     }
 }

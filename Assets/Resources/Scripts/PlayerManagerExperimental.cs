@@ -5,25 +5,28 @@ using UnityEditor;
 public class PlayerManagerExperimental : MonoBehaviour
 {
 
+
+
     public float speedX = 5;
     public float jumpSpeedY = 300;
-    public float delayBeforeDoubleJump = 0.01f;
+    //public float delayBeforeDoubleJump = 0.01f;
     public GameObject leftBullet, rightBullet;
 
-    float speed;
+    float playerSpeed;
+    float Horizontal;
+    
     bool isFacingRight, isJumping, isOnTheGround, canDoubleJump;
 
     Transform firePos;
     Animator anim;
     Rigidbody2D rb;
 
+    bool isRobot = true;
 
     // Use this for initialization
     void Start()
     {
-
         anim = GetComponent<Animator>();
-
         rb = GetComponent<Rigidbody2D>();
         isFacingRight = true;
         firePos = transform.FindChild("firePos");
@@ -31,64 +34,54 @@ public class PlayerManagerExperimental : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
-        MovePlayer(speed);
+        Horizontal = Input.GetAxis("Horizontal");
+        MovePlayer();
         Flip();
 
-        // if Left arrow is pressed it sets the speed varible to negative speed
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            //anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot..controller") as RuntimeAnimatorController;
-            speed = -speedX + Time.deltaTime;
-        }
-        // if Left arrow is pressed it sets the speed varible to negative speed
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            //anim.runtimeAnimatorController = Instantiate(Resources.Load("Animation/Robot") as RuntimeAnimatorController);
-            //anim.runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load("Animations/NinjaBoy/NinjaBoy", typeof(RuntimeAnimatorController)));
-            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
-        }
-
-        // if Left arrow is not pressed sets speed varible to 0
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            speed = 0;
-        }
-
-        // if Right arrow is pressed sets the speed to positive speed
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            speed = speedX + Time.deltaTime;
-        }
-
-        // if Right arrow is not pressed sets speed varible to 0
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            speed = 0;
-        }
-
         // if Up arrow key is pressed we set the jump animation and invoke the jump function
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isOnTheGround)
+        // jump 
+        if (Input.GetButtonDown("Jump") && isOnTheGround)
+        {
+            PlayerJump();
+        }
+        // double jump
+        if (Input.GetButtonDown("Jump") && canDoubleJump)
         {
             PlayerJump();
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) && canDoubleJump)
+        if (Input.GetButtonDown("Fire"))
         {
-            PlayerJump();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
             Fire();
+        }
+
+        // change character
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SwichCharecter();
+
         }
     }
 
-    void MovePlayer(float playerSpeed)
+    private void SwichCharecter()
     {
+        if (isRobot)
+        {
+            isRobot = false;
+            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
+        }
+        else
+        {
+            isRobot = true;
+            anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot") as RuntimeAnimatorController;
+        }
+    }
+
+    void MovePlayer()
+    {
+        playerSpeed = Horizontal * speedX;
         // if player is moveing left or right without jumping we set animation to Running
         if (playerSpeed != 0 && !isJumping)
         {
@@ -101,13 +94,15 @@ public class PlayerManagerExperimental : MonoBehaviour
             anim.SetInteger("State", 0);
         }
 
-        rb.velocity = new Vector2(speed, rb.velocity.y);
+        //controls player forward and backword movement
+        
+        rb.velocity = new Vector2(playerSpeed, rb.velocity.y);
     }
 
     // fliping the player if needed
     void Flip()
     {
-        if (speed > 0 && !isFacingRight || speed < 0 && isFacingRight)
+        if (playerSpeed > 0 && !isFacingRight || playerSpeed < 0 && isFacingRight)
         {
             isFacingRight = !isFacingRight;
             Vector2 tempVector = transform.localScale;
@@ -136,7 +131,6 @@ public class PlayerManagerExperimental : MonoBehaviour
 
 
 
-
     }
 
     void PlayerJump()
@@ -148,7 +142,7 @@ public class PlayerManagerExperimental : MonoBehaviour
             isJumping = true;
             rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
             anim.SetInteger("State", 2);
-            Invoke("EnablePlayerDoubleJump", delayBeforeDoubleJump);
+            Invoke("EnablePlayerDoubleJump", 0.01f);
         }
 
         // double jump
