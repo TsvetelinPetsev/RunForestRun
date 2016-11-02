@@ -1,2 +1,3 @@
 Added charecters textures from http://www.gameart2d.com/
 Added map tiles and backgrounds from http://www.gameart2d.com/
+Added free fonts from http://www.1001fonts.com/

@@ -3,21 +3,28 @@ using System.Collections;
 
 public class Exploding : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public GameObject[] DestroyObjects; //attached objects to destroy
+    private ParticleSystem particle;
 
-    void OnCollisionEnter2D(Collision2D other)
+    void Start()
     {
-        if (other.gameObject.CompareTag("Boxes"))
+        particle = GetComponent<ParticleSystem>();
+    }
+
+        void OnTriggerEnter2D(Collider2D colision)
+    {
+        if (colision.gameObject.tag == "Projectile")
         {
-            Destroy(other.gameObject);
-        }
+            Destroy(colision.gameObject);
+
+            particle.Play();
+            Destroy(gameObject, particle.duration);
+            foreach (GameObject obj in DestroyObjects)
+            {
+                Destroy(obj);
+            }
+            
+        }        
+        
     }
 }

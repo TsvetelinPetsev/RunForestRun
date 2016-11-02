@@ -11,8 +11,8 @@ public class CameraControll : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         // make camera folow the player
-        transform.position = new Vector3(player.position.x, player.position.y + cameraYOffset, transform.position.z); // or just use Vector2
+        transform.position = new Vector3(player.position.x, player.position.y + cameraYOffset * Time.deltaTime, transform.position.z); 
 	}
 }
