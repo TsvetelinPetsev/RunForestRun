@@ -6,81 +6,75 @@ using UnityEngine.UI;
 public class HealthManager : MonoBehaviour {
 
     public GameObject[] Hearts;
-    private int health;
-    public int acidDmgTimer = 1;
-    private float dmgTimer = 0;
-    private bool acidCanTakeDmg;
-    private bool enableTimerAcid;
-
-	// Use this for initialization
-	void Start () {
-        health = Hearts.Length;
         
+    private int health; 
+    private bool enableLoadOnce = true;
+    public bool enableCheats;
 
+    // Use this for initialization
+    void Start ()
+    {
+        health = Hearts.Length;
     }
 
     void FixedUpdate()
     {
-        onAcidTakeDMG();
+        Cheats();
         IsDeath();
+    }
+
+    private void Cheats()
+    {
+        if (enableCheats)
+        {
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                TakeDMG(1);
+            }
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                GetHealth(1);
+            }
+        }
+        
     }
 
     private void IsDeath()
     {
         if (health <= 0)
         {
-            SceneManager.LoadSceneAsync("Sci_Fi_Scene");
+            if (enableLoadOnce)
+            {
+                SceneManager.LoadSceneAsync("Sci_Fi_Scene");
+                enableLoadOnce = false;
+            }
+            
         }
+    }  
+    
+    public void TakeDMG(int takeDmg)
+    {
+        for (int i = 0; i < takeDmg; i++)
+        {
+            health--;               
+            Hearts[health].SetActive(false);
+        } 
     }
 
-    private void onAcidTakeDMG()
+    public void GetHealth(int GetHealth)
     {
-        if (acidCanTakeDmg)
+        for (int i = 1; i <= GetHealth; i++)
         {
-            TakeDMG(1);
-            acidCanTakeDmg = false;
+            this.health++;
+            if (health >= Hearts.Length)
+            {
+                health = Hearts.Length;
+                Debug.Log("You cant get more helth:MaxHealth");
+            }
+            
+            Hearts[this.health -1].SetActive(true);
+            Debug.Log(health);
         }
-        if (enableTimerAcid)
-        {
-            dmgTimer += Time.deltaTime;
-        }
-
-
-        if (dmgTimer >= acidDmgTimer)
-        {
-            acidCanTakeDmg = true;
-            dmgTimer = 0;
-        }
-        else
-        {
-            acidCanTakeDmg = false;
-        }
-    }
-
-    void OnTriggerEnter2D(Collider2D colision)
-    {
-        if (colision.gameObject.CompareTag("Acid"))
-        {
-            acidCanTakeDmg = true;
-            enableTimerAcid = true;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D colision)
-    {
-        
-        if (colision.gameObject.CompareTag("Acid"))
-        {
-            acidCanTakeDmg = false;
-            enableTimerAcid = false;
-        }
-    }
-
-
-    void TakeDMG(int takeDmg)
-    {
-        // TODO: take more then 1 dmg properly
-        health -= takeDmg;
-        Hearts[health].SetActive(false);
     }
 }

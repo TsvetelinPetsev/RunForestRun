@@ -1,3 +1,4 @@
 Added charecters textures from http://www.gameart2d.com/
 Added map tiles and backgrounds from http://www.gameart2d.com/
 Added free fonts from http://www.1001fonts.com/
+Added free glass textures from http://www.officialpsds.com/  (CC BY 3.0)
