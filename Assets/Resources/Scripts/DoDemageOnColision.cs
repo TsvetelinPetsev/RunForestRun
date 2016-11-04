@@ -12,6 +12,7 @@ public class DoDemageOnColision : MonoBehaviour {
     private bool enableTimer;
 
     HealthManager HealthManager;
+
     // Use this for initialization
     void Start ()
     {

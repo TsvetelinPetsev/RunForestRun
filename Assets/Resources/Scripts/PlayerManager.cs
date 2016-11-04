@@ -10,57 +10,73 @@ public class PlayerManager : MonoBehaviour {
     public float jumpSpeedY = 300;
     //public float delayBeforeDoubleJump = 0.01f;
     public GameObject leftBullet, rightBullet;
-
+    public LayerMask GroundLayer;
     float playerSpeed;
     float Horizontal;
 
-    bool isFacingRight, isJumping, isOnTheGround, canDoubleJump;
+    bool isFacingRight,isOnTheGround, canDoubleJump;
 
-    Transform firePos;
-    Animator anim;
-    Rigidbody2D rb;
+    Transform ProjectileFirePos;
+    Animator playerAnimator;
+    Rigidbody2D playerRigidBody;
+    GameObject GroundedTrigger;
 
     bool isRobot = true;
 
     // Use this for initialization
     void Start()
     {
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        playerAnimator = GetComponent<Animator>();
+        playerRigidBody = GetComponent<Rigidbody2D>();
         isFacingRight = true;
-        firePos = transform.FindChild("firePos");
+        ProjectileFirePos = transform.FindChild("firePos");
+        GroundedTrigger = GameObject.Find("GroundTrigger");
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         Horizontal = Input.GetAxis("Horizontal");
         MovePlayer();
         Flip();
 
-        // if Up arrow key is pressed we set the jump animation and invoke the jump function
-        // jump 
+        
+        // Jump  Controls
         if (Input.GetButtonDown("Jump") && isOnTheGround)
         {
             PlayerJump();
         }
-        // double jump
+        // double jump Controls
         if (Input.GetButtonDown("Jump") && canDoubleJump)
         {
             PlayerJump();
         }
 
+        // Fire Controls
         if (Input.GetButtonDown("Fire"))
         {
             Fire();
         }
 
-        // change character
+        // Change Charecter Controls
         if (Input.GetKeyDown(KeyCode.C))
         {
             SwichCharecter();
 
+        }
+    }
+
+    // if player colide with something
+    void OnCollisionEnter2D(Collision2D colision)
+    {
+        // if player is on top of and object or ground, we change the animation state and enable jumping
+        if (GroundedTrigger.GetComponent<IsColliding>().IsObjectTriggerCollideing)
+        {
+            playerAnimator.SetInteger("State", 0);
+            isOnTheGround = true;            
+            canDoubleJump = false;
         }
     }
 
@@ -69,12 +85,12 @@ public class PlayerManager : MonoBehaviour {
         if (isRobot)
         {
             isRobot = false;
-            anim.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
+            playerAnimator.runtimeAnimatorController = Resources.Load("Animations/NinjaBoy/NinjaBoy") as RuntimeAnimatorController;
         }
         else
         {
             isRobot = true;
-            anim.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot") as RuntimeAnimatorController;
+            playerAnimator.runtimeAnimatorController = Resources.Load("Animations/Robot/Robot") as RuntimeAnimatorController;
         }
     }
 
@@ -82,20 +98,20 @@ public class PlayerManager : MonoBehaviour {
     {
         playerSpeed = Horizontal * speedX;
         // if player is moveing left or right without jumping we set animation to Running
-        if (playerSpeed != 0 && !isJumping)
+        if (playerSpeed != 0 && isOnTheGround)
         {
-            anim.SetInteger("State", 1);
+            playerAnimator.SetInteger("State", 1);
         }
 
         // if player is not moving and not jumping we set the animation to Idle
-        if (playerSpeed == 0 && !isJumping)
+        if (playerSpeed == 0 && isOnTheGround)
         {
-            anim.SetInteger("State", 0);
+            playerAnimator.SetInteger("State", 0);
         }
 
         //controls player forward and backword movement
 
-        rb.velocity = new Vector2(playerSpeed, rb.velocity.y);
+        playerRigidBody.velocity = new Vector2(playerSpeed, playerRigidBody.velocity.y);
     }
 
     // fliping the player if needed
@@ -108,40 +124,16 @@ public class PlayerManager : MonoBehaviour {
             tempVector.x *= -1;
             transform.localScale = tempVector;
         }
-    }
-
-    // if player colide with something
-    void OnCollisionEnter2D(Collision2D colision)
-    {
-        // if player hits the ground we change the animation and state
-        if (colision.gameObject.CompareTag("Ground"))
-        {
-            anim.SetInteger("State", 0);
-            isOnTheGround = true;
-            isJumping = false;
-            canDoubleJump = false;
-            
-        }
-
-        // door teleport TODO:FIX
-        //if (colision.gameObject.tag == "Through")
-        //{
-        //    gameObject.transform.position = new Vector3(217.5f, 7.554f, 0f);
-        //}
-
-
-
-    }
+    }  
 
     void PlayerJump()
     {
         // single jump
         if (isOnTheGround)
         {
-            isOnTheGround = false;
-            isJumping = true;
-            rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
-            anim.SetInteger("State", 2);
+            isOnTheGround = false;            
+            playerRigidBody.AddForce(new Vector2(playerRigidBody.velocity.x, jumpSpeedY));
+            playerAnimator.SetInteger("State", 2);
             Invoke("EnablePlayerDoubleJump", 0.01f);
         }
 
@@ -149,9 +141,9 @@ public class PlayerManager : MonoBehaviour {
         if (canDoubleJump)
         {
             canDoubleJump = false;
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
-            anim.SetInteger("State", 2);
+            playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x, 0);
+            playerRigidBody.AddForce(new Vector2(playerRigidBody.velocity.x, jumpSpeedY));
+            playerAnimator.SetInteger("State", 2);
         }
     }
 
@@ -164,13 +156,13 @@ public class PlayerManager : MonoBehaviour {
     {
         if (isFacingRight)
         {
-            Instantiate(rightBullet, firePos.position, Quaternion.identity);
-            anim.SetInteger("State", 3);
+            Instantiate(rightBullet, ProjectileFirePos.position, Quaternion.identity);
+            playerAnimator.SetInteger("State", 3);
         }
         else
         {
-            Instantiate(leftBullet, firePos.position, Quaternion.identity);
-            anim.SetInteger("State", 3);
+            Instantiate(leftBullet, ProjectileFirePos.position, Quaternion.identity);
+            playerAnimator.SetInteger("State", 3);
         }
     }
 }
