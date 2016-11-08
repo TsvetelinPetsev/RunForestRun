@@ -3,7 +3,7 @@ using System.Collections;
 
 public class OnProjectileHit : MonoBehaviour {
 
-    public float Demage;
+    public int Demage;
     private RocketProjectileManager projectileController;
 
     public GameObject ExplosionEffect;
@@ -30,6 +30,11 @@ public class OnProjectileHit : MonoBehaviour {
             Instantiate(ExplosionEffect,transform.position,transform.rotation);
             Destroy(gameObject);
         }
+        if (colider.CompareTag("Enemy"))
+        {
+            EnemyHealth EnemyHealthManager = colider.gameObject.GetComponent<EnemyHealth>();
+            EnemyHealthManager.DemageEnemy(Demage);
+        }
     }
 
     void OnTriggerStay2D(Collider2D colider)
@@ -41,5 +46,8 @@ public class OnProjectileHit : MonoBehaviour {
             Instantiate(ExplosionEffect, transform.position, transform.rotation);
             Destroy(gameObject);
         }
+
+       
     }
+
 }

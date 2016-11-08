@@ -6,21 +6,22 @@ using UnityEngine.UI;
 public class HealthManager : MonoBehaviour {
 
     public GameObject[] Hearts;
+    public GameObject deathEffect;
         
-    private int health; 
-    private bool enableLoadOnce = true;
+    private int playerCurrentHealth; 
+    private bool IsAlive = true;
     public bool enableCheats;
 
     // Use this for initialization
     void Start ()
     {
-        health = Hearts.Length;
+        playerCurrentHealth = Hearts.Length;
     }
 
     void FixedUpdate()
     {
         Cheats();
-        IsDeath();
+        
     }
 
     private void Cheats()
@@ -29,7 +30,7 @@ public class HealthManager : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.K))
             {
-                TakeDMG(1);
+                TakeDemage(1);
             }
 
             if (Input.GetKeyDown(KeyCode.L))
@@ -40,41 +41,55 @@ public class HealthManager : MonoBehaviour {
         
     }
 
-    private void IsDeath()
+    public void KillPlayer()
     {
-        if (health <= 0)
+        //if PlayerDie .. reload the scene
+        //TODO: make it display Death Screen
+        if (IsAlive)
         {
-            if (enableLoadOnce)
-            {
-                SceneManager.LoadSceneAsync("Sci_Fi_Scene");
-                enableLoadOnce = false;
-            }
-            
-        }
+            Instantiate(deathEffect,transform.position,transform.rotation);
+            PlayerManager PlayerManager = gameObject.GetComponent<PlayerManager>();
+            PlayerManager.isPlayerDeath = true;
+            //Destroy(gameObject, 1);
+            //SceneManager.LoadSceneAsync("Sci_Fi_Scene");
+            IsAlive = false;
+        }    
     }  
     
-    public void TakeDMG(int takeDmg)
+    public void TakeDemage(int takeDmg)
     {
-        for (int i = 0; i < takeDmg; i++)
+        if (takeDmg > 0)
         {
-            health--;               
-            Hearts[health].SetActive(false);
-        } 
+            for (int i = 0; i < takeDmg; i++)
+            {
+                playerCurrentHealth--;
+                if (playerCurrentHealth < 0)
+                {
+                    playerCurrentHealth = 0;
+                }
+                Hearts[playerCurrentHealth].SetActive(false);
+            }
+        }
+        if (playerCurrentHealth<=0)
+        {
+            KillPlayer();
+        }
+        
     }
 
     public void GetHealth(int GetHealth)
     {
         for (int i = 1; i <= GetHealth; i++)
         {
-            this.health++;
-            if (health >= Hearts.Length)
+            this.playerCurrentHealth++;
+            if (playerCurrentHealth >= Hearts.Length)
             {
-                health = Hearts.Length;
+                playerCurrentHealth = Hearts.Length;
                 Debug.Log("You cant get more helth:MaxHealth");
             }
             
-            Hearts[this.health -1].SetActive(true);
-            Debug.Log(health);
+            Hearts[this.playerCurrentHealth -1].SetActive(true);
+            Debug.Log(playerCurrentHealth);
         }
     }
 }

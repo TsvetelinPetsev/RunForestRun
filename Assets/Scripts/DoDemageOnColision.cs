@@ -4,8 +4,8 @@ using System.Collections;
 
 public class DoDemageOnColision : MonoBehaviour {
 
-    public int howMuchDMG = 1;
-    public int damageTimer = 1;
+    public int Demage = 1;
+    public int damageRate = 1;
     public bool doDMGAtStart = true;
     private float dmgTimer = 0;
     private bool ObjectCanDoDmg;
@@ -29,7 +29,7 @@ public class DoDemageOnColision : MonoBehaviour {
     {
         if (ObjectCanDoDmg)
         {
-            HealthManager.TakeDMG(howMuchDMG);
+            HealthManager.TakeDemage(Demage);
             ObjectCanDoDmg = false;
         }
 
@@ -38,7 +38,7 @@ public class DoDemageOnColision : MonoBehaviour {
             dmgTimer += Time.deltaTime;
         }
 
-        if (dmgTimer >= damageTimer)
+        if (dmgTimer >= damageRate)
         {
             ObjectCanDoDmg = true;
             dmgTimer = 0;
