@@ -194,9 +194,6 @@ public class PlayerManager : MonoBehaviour {
             }
             
         }
-        
-          
-
 
         playerRigidBody.velocity = new Vector2(playerSpeed, playerRigidBody.velocity.y);
     }

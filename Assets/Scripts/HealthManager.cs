@@ -7,15 +7,24 @@ public class HealthManager : MonoBehaviour {
 
     public GameObject[] Hearts;
     public GameObject deathEffect;
-        
+
+    public int PlayerFullHealth;    
     private int playerCurrentHealth; 
     private bool IsAlive = true;
     public bool enableCheats;
 
+    //HUD varibles
+    public Slider healthSlider;
+
     // Use this for initialization
     void Start ()
     {
-        playerCurrentHealth = Hearts.Length;
+        PlayerFullHealth = Hearts.Length;
+        playerCurrentHealth = PlayerFullHealth;
+
+        // grab the HUD elements and inicialize
+        healthSlider.maxValue = PlayerFullHealth;
+        healthSlider.value = playerCurrentHealth;
     }
 
     void FixedUpdate()
@@ -68,6 +77,8 @@ public class HealthManager : MonoBehaviour {
                     playerCurrentHealth = 0;
                 }
                 Hearts[playerCurrentHealth].SetActive(false);
+
+                healthSlider.value = playerCurrentHealth;
             }
         }
         if (playerCurrentHealth<=0)
