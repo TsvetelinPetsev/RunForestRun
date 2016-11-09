@@ -9,7 +9,7 @@ public class EnemyHealth : MonoBehaviour {
     private int EnemyCurrentHealth;
     public GameObject EnemyDeathFX;
     public Slider enemyHealthSlider;
-
+    public bool isEnemyDeath;
 	// Use this for initialization
 	void Start ()
     {
@@ -43,10 +43,10 @@ public class EnemyHealth : MonoBehaviour {
     {
         if (EnemyDeathFX != null)
         {
-            
+            Instantiate(EnemyDeathFX, transform.position + (transform.up * -1), transform.rotation);
         }
+        isEnemyDeath = true;
+        Destroy(gameObject,5);
         
-        Destroy(gameObject);
-        Instantiate(EnemyDeathFX, transform.position + (transform.up * -1), transform.rotation);
     }
 }

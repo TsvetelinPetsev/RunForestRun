@@ -3,14 +3,14 @@ using System.Collections;
 
 public class ZombieAI : MonoBehaviour {
 
-    public float ZombieSpeed =5;
+    public float ZombieSpeed = 5;
 
     Animator ZombieAnimator;
     public GameObject Zombie;
     Rigidbody2D ZombieRB;
 
     // facing
-    bool canFlip = true; // for disableing flipping while charge
+    //bool canFlip = true; // for disableing flipping while charge
     public bool facingRinght = true;
     float autoFlipTime = 5f;
     float nextRandomFlip = 0f;
@@ -19,74 +19,52 @@ public class ZombieAI : MonoBehaviour {
     public float timeBeforeChargeing;
     float startChargeTime;
     bool isChargeing;
-
+    bool isEnemyAlive = true;
+    EnemyMeleeDMG enemyMelleDMGScript;
+    EnemyHealth enemyhealthScript;
     // Use this for initialization
     void Start ()
     {
         ZombieAnimator = GetComponentInChildren<Animator>();
+        enemyMelleDMGScript = GetComponentInChildren<EnemyMeleeDMG>();
+        enemyhealthScript = GetComponentInChildren<EnemyHealth>();
         ZombieRB = GetComponent<Rigidbody2D>();
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
-        //if (Time.time > nextRandomFlip)
-        //{            
-        //    flipFacing();
-        //    nextRandomFlip = Time.time + Random.Range(1, 10);
-        //}
-	}
+        if (!isChargeing)
+        {
+            if (Time.time > nextRandomFlip)
+            {
+                flipFacing();
+                nextRandomFlip = Time.time + Random.Range(2, 10);
+            }
+        }
+        if (enemyhealthScript.isEnemyDeath && isEnemyAlive)
+        {
+            ZombieAnimator.SetInteger("State", 3);
+            Destroy(gameObject, 6);
+            isEnemyAlive = false;
+        }
+       
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && isEnemyAlive)
         {
-            if (facingRinght)
+
+           
+            if (facingRinght && other.transform.position.x < transform.position.x)
             {
-                Debug.Log("gleda na dqsno gadinata");
-                if (other.transform.position.x > transform.right.x)
-                {
-                    Debug.Log("tupo 1");
-                    Debug.Log(other.transform.position.x);
-                    Debug.Log(transform.right.x);
-                }
-                if (other.transform.position.x < -transform.right.x)
-                {
-                    Debug.Log("tupo 2");
-                    Debug.Log(other.transform.position.x);
-                    Debug.Log(transform.right.x);
-                }
+                flipFacing();
             }
-
-            if (!facingRinght)
+            else if (!facingRinght && other.transform.position.x > transform.position.x)
             {
-                Debug.Log("gleda na lqvo gadinata");
-                if (other.transform.position.x > transform.position.x)
-                {
-                    Debug.Log("ofca 1");
-                    Debug.Log(other.transform.position.x);
-                    Debug.Log(transform.position.x);
-                }
-                if (other.transform.position.x < transform.position.x)
-                {
-                    Debug.Log("ofca 2");
-                    Debug.Log(other.transform.position.x);
-                    Debug.Log(transform.position.x);
-                }
-            }
-
-            //// ako e na lqvo i player-a vliza ot 
-            //if (!facingRinght && other.transform.position.x < transform.position.x)
-            //{
-            //    flipFacing();
-            //}
-
-            //if (facingRinght && other.transform.position.x < transform.position.x)
-            //{
-            //    flipFacing();
-            //}
-
-            canFlip = false;
+                flipFacing();
+            }                        
             isChargeing = true;
             startChargeTime = Time.time + timeBeforeChargeing;
         }
@@ -94,31 +72,40 @@ public class ZombieAI : MonoBehaviour {
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && isEnemyAlive)
         {
             if (startChargeTime < Time.time)
             {
-                if (facingRinght)
+                if (enemyMelleDMGScript.isPlayerDemaged)
                 {
-                    //ZombieRB.AddForce(new Vector2(1, 0) * ZombieSpeed);
-                    ZombieRB.velocity = new Vector2(ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
-                    ZombieAnimator.SetInteger("State", 1);
+
+                    ZombieAnimator.SetInteger("State", 2);
                 }
                 else
                 {
-                    //ZombieRB.AddForce(new Vector2(-1, 0) * ZombieSpeed);
-                    ZombieRB.velocity = new Vector2(-ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
-                    ZombieAnimator.SetInteger("State", 1);
+                    if (facingRinght)
+                    {
+                        //ZombieRB.AddForce(new Vector2(1, 0) * ZombieSpeed);
+                        ZombieRB.velocity = new Vector2(ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
+                        ZombieAnimator.SetInteger("State", 1);
+                    }
+                    else
+                    {
+                        //ZombieRB.AddForce(new Vector2(-1, 0) * ZombieSpeed);
+                        ZombieRB.velocity = new Vector2(-ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
+                        ZombieAnimator.SetInteger("State", 1);
+                    }
                 }
+                
             }
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && isEnemyAlive)
         {
-            canFlip = true;
+            
             isChargeing = false;
             ZombieRB.velocity = new Vector2(0f, 0f);
             ZombieAnimator.SetInteger("State", 0);
@@ -127,14 +114,13 @@ public class ZombieAI : MonoBehaviour {
 
     void flipFacing()
     {
-        if (!canFlip)
+        if (isEnemyAlive)
         {
-            return;
+            float facingX = Zombie.transform.localScale.x;
+            facingX *= -1f;
+            Zombie.transform.localScale = new Vector3(facingX, Zombie.transform.localScale.y, Zombie.transform.localScale.z);
+            facingRinght = !facingRinght;
         }
-
-        float facingX = Zombie.transform.localScale.x;
-        facingX *= -1f;
-        Zombie.transform.localScale = new Vector3(facingX, Zombie.transform.localScale.y, Zombie.transform.localScale.z);
-        facingRinght = !facingRinght; 
+                   
     }
 }
