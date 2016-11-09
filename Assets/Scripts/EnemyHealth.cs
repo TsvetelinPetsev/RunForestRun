@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+
 
 public class EnemyHealth : MonoBehaviour {
 
     public int EnemyMaxHealth;
     private int EnemyCurrentHealth;
+    public GameObject EnemyDeathFX;
+    public Slider enemyHealthSlider;
 
 	// Use this for initialization
 	void Start ()
     {
         EnemyCurrentHealth = EnemyMaxHealth;
-
+        enemyHealthSlider.maxValue = EnemyMaxHealth;
+        enemyHealthSlider.value = EnemyCurrentHealth;
 
     }
 	
@@ -23,6 +28,10 @@ public class EnemyHealth : MonoBehaviour {
     public void DemageEnemy(int demage)
     {
         EnemyCurrentHealth -= demage;
+
+        enemyHealthSlider.gameObject.SetActive(true);
+        enemyHealthSlider.value = EnemyCurrentHealth;
+
         if (EnemyCurrentHealth <= 0)
         {
             EnemyCurrentHealth = 0;
@@ -32,6 +41,12 @@ public class EnemyHealth : MonoBehaviour {
 
     private void KillEnemy()
     {
+        if (EnemyDeathFX != null)
+        {
+            
+        }
+        
         Destroy(gameObject);
+        Instantiate(EnemyDeathFX, transform.position + (transform.up * -1), transform.rotation);
     }
 }

@@ -16,6 +16,12 @@ public class HealthManager : MonoBehaviour {
     //HUD varibles
     public Slider healthSlider;
 
+    // dameged splat screen
+    public Image damageScreenImage;
+    private bool playerDamaged = false;
+    Color damageColour = new Color(1f,0f,0f,1f); // change image alpha
+    float smoothColourOverTime = 5f;
+
     // Use this for initialization
     void Start ()
     {
@@ -29,8 +35,21 @@ public class HealthManager : MonoBehaviour {
 
     void FixedUpdate()
     {
+        DamagedScreen();
+    }
+
+    private void DamagedScreen()
+    {
         Cheats();
-        
+        if (playerDamaged)
+        {
+            damageScreenImage.color = damageColour;
+        }
+        else
+        {
+            damageScreenImage.color = Color.Lerp(damageScreenImage.color, Color.clear, smoothColourOverTime * Time.deltaTime);
+        }
+        playerDamaged = false;
     }
 
     private void Cheats()
@@ -76,6 +95,8 @@ public class HealthManager : MonoBehaviour {
                 {
                     playerCurrentHealth = 0;
                 }
+
+                playerDamaged = true;
                 Hearts[playerCurrentHealth].SetActive(false);
 
                 healthSlider.value = playerCurrentHealth;

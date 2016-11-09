@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour {
 
