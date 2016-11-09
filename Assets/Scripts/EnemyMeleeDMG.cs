@@ -9,15 +9,26 @@ public class EnemyMeleeDMG : MonoBehaviour {
     //public bool doDMGAtStart = true;
     public float pushBackForce = 5;
     private float dmgTimer = 0;
+    public bool isPlayerDemaged;
 
     void OnTriggerStay2D(Collider2D colision)
     {
         if (colision.CompareTag("Player") && dmgTimer < Time.time)
         {
-           HealthManager PlayerHealth =  colision.gameObject.GetComponent<HealthManager>();
+            isPlayerDemaged = true;
+            HealthManager PlayerHealth =  colision.gameObject.GetComponent<HealthManager>();
             PlayerHealth.TakeDemage(damage);
             dmgTimer = Time.time + damageRate;
             PushBackPlayer(colision.transform);
+            
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D colision)
+    {
+        if (colision.CompareTag("Player"))
+        {
+            isPlayerDemaged = false;
         }
     }
 

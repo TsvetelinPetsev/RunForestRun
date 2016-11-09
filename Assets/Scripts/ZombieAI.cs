@@ -11,7 +11,7 @@ public class ZombieAI : MonoBehaviour {
 
     // facing
     bool canFlip = true; // for disableing flipping while charge
-    bool facingRinght = true;
+    public bool facingRinght = true;
     float autoFlipTime = 5f;
     float nextRandomFlip = 0f;
 
@@ -25,35 +25,66 @@ public class ZombieAI : MonoBehaviour {
     {
         ZombieAnimator = GetComponentInChildren<Animator>();
         ZombieRB = GetComponent<Rigidbody2D>();
-
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if (Time.time > nextRandomFlip)
-        {
-            if (Random.Range(0, 10) >= 5)
-            {
-                flipFacing();
-            }
-
-            nextRandomFlip = Time.time + autoFlipTime;
-        }
+        //if (Time.time > nextRandomFlip)
+        //{            
+        //    flipFacing();
+        //    nextRandomFlip = Time.time + Random.Range(1, 10);
+        //}
 	}
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            if (!facingRinght && other.transform.position.x > transform.position.x)
+            if (facingRinght)
             {
-                flipFacing();
+                Debug.Log("gleda na dqsno gadinata");
+                if (other.transform.position.x > transform.right.x)
+                {
+                    Debug.Log("tupo 1");
+                    Debug.Log(other.transform.position.x);
+                    Debug.Log(transform.right.x);
+                }
+                if (other.transform.position.x < -transform.right.x)
+                {
+                    Debug.Log("tupo 2");
+                    Debug.Log(other.transform.position.x);
+                    Debug.Log(transform.right.x);
+                }
             }
-            else if (facingRinght && other.transform.position.x < transform.position.x)
+
+            if (!facingRinght)
             {
-                flipFacing();
+                Debug.Log("gleda na lqvo gadinata");
+                if (other.transform.position.x > transform.position.x)
+                {
+                    Debug.Log("ofca 1");
+                    Debug.Log(other.transform.position.x);
+                    Debug.Log(transform.position.x);
+                }
+                if (other.transform.position.x < transform.position.x)
+                {
+                    Debug.Log("ofca 2");
+                    Debug.Log(other.transform.position.x);
+                    Debug.Log(transform.position.x);
+                }
             }
+
+            //// ako e na lqvo i player-a vliza ot 
+            //if (!facingRinght && other.transform.position.x < transform.position.x)
+            //{
+            //    flipFacing();
+            //}
+
+            //if (facingRinght && other.transform.position.x < transform.position.x)
+            //{
+            //    flipFacing();
+            //}
 
             canFlip = false;
             isChargeing = true;
@@ -69,12 +100,15 @@ public class ZombieAI : MonoBehaviour {
             {
                 if (facingRinght)
                 {
-                    ZombieRB.AddForce(new Vector2(1, 0) * ZombieSpeed);
+                    //ZombieRB.AddForce(new Vector2(1, 0) * ZombieSpeed);
+                    ZombieRB.velocity = new Vector2(ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
+                    ZombieAnimator.SetInteger("State", 1);
                 }
                 else
                 {
-                    ZombieRB.AddForce(new Vector2(-1, 0) * ZombieSpeed);
-                    ZombieAnimator.SetInteger("State", 2);
+                    //ZombieRB.AddForce(new Vector2(-1, 0) * ZombieSpeed);
+                    ZombieRB.velocity = new Vector2(-ZombieSpeed * Time.deltaTime, ZombieRB.velocity.y);
+                    ZombieAnimator.SetInteger("State", 1);
                 }
             }
         }

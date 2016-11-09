@@ -62,7 +62,7 @@ public class PlayerManager : MonoBehaviour {
 
     private void SetAnimationState()
     {
-        Debug.Log("Animation State:"+animationState);
+        //Debug.Log("Animation State:"+animationState);
         if (animationState == 0) // Idle
         {
             playerAnimator.SetInteger("State", 0);
