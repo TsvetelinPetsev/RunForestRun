@@ -6,11 +6,14 @@ public class CoinManager : MonoBehaviour {
        
     private int money;
     private int highScore;
+    AudioSource coinMusic;
+    public AudioClip coinClip;
 
     void Start()
     {
         highScore = PlayerPrefs.GetInt("highscore");
         GameObject.Find("BestTimeScore").GetComponent<Text>().text = highScore.ToString();
+        coinMusic = GetComponentInChildren<AudioSource>();
     }
 
     void FixedUpdate()
@@ -25,6 +28,7 @@ public class CoinManager : MonoBehaviour {
         {
             PlayerPrefs.SetInt("highscore", money);
             PlayerPrefs.Save();
+            GameObject.Find("BestTimeScore").GetComponent<Text>().text = money.ToString();
         }
     }
 
@@ -35,6 +39,9 @@ public class CoinManager : MonoBehaviour {
             Debug.Log("Triggered");
             money++;
             GameObject.Find("MoneyTxt").GetComponent<Text>().text = money.ToString();
+
+            coinMusic.clip = coinClip;
+            coinMusic.PlayOneShot(coinClip, 0.3f);
 
             GameObject.Find("YourTimeScore").GetComponent<Text>().text = money.ToString();
             GameObject.Find("BestTimeScore").GetComponent<Text>().text = highScore.ToString();
