@@ -6,8 +6,10 @@ public class DoorAnimator : MonoBehaviour {
     public Sprite doorOpen;
     public Sprite doorClosedUnlock;
     public Sprite doorClosedLocked;
+    public GameObject InstantiateOnDoorOpen;
     public bool isDoorOpen;
     public bool isDoorLocked;
+    private bool isEndLVL; 
 
     private int doorStatus; // status = 0 (Open), status = 1 (closed/unlocked),status = 2 (closed/locked)
     private SpriteRenderer SpriteRenderer;
@@ -18,12 +20,13 @@ public class DoorAnimator : MonoBehaviour {
         SpriteRenderer = GetComponent<SpriteRenderer>();
         CheckDoorStatus();
     }
-
+    
     // Update is called once per frame
     void FixedUpdate()
     {
         CheckDoorStatus();
         DoorAnimationStatus();
+        
     }
 
     private void DoorAnimationStatus()
@@ -31,6 +34,11 @@ public class DoorAnimator : MonoBehaviour {
         if (doorStatus == 0) // status = 0 (Open)
         {
             SpriteRenderer.sprite = doorOpen;
+            if (InstantiateOnDoorOpen != null && !isEndLVL)
+            {
+                isEndLVL = true;
+                Instantiate(InstantiateOnDoorOpen,transform.position,transform.rotation);
+            }
         }
         else if (doorStatus == 1) // status = 1 (closed/unlocked)
         {

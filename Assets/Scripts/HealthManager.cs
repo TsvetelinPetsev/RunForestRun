@@ -79,11 +79,15 @@ public class HealthManager : MonoBehaviour {
             PlayerManager PlayerManager = gameObject.GetComponent<PlayerManager>();
             PlayerManager.isPlayerDeath = true;
             //Destroy(gameObject, 1);
-            //SceneManager.LoadSceneAsync("Sci_Fi_Scene");
+            Invoke("ReloadScene", 3);            
             IsAlive = false;
         }    
-    }  
-    
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadSceneAsync("Sci_Fi_Scene");
+    }
     public void TakeDemage(int takeDmg)
     {
         if (takeDmg > 0)

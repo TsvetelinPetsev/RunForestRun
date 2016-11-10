@@ -9,6 +9,7 @@ public class EnemyHealth : MonoBehaviour {
     private int EnemyCurrentHealth;
     public GameObject EnemyDeathFX;
     public Slider enemyHealthSlider;
+    public GameObject deathDrop;
     public bool isEnemyDeath;
 	// Use this for initialization
 	void Start ()
@@ -43,8 +44,15 @@ public class EnemyHealth : MonoBehaviour {
     {
         if (EnemyDeathFX != null)
         {
-            Instantiate(EnemyDeathFX, transform.position + (transform.up * -1), transform.rotation);
+            //Instantiate(EnemyDeathFX, transform.position + (transform.up * -1), transform.rotation);
+            Instantiate(EnemyDeathFX, transform.position, transform.rotation);
+
         }
+        if (deathDrop != null)
+        {
+            Instantiate(deathDrop, transform.position + (transform.up), transform.rotation);
+            //Instantiate(deathDrop, transform.position, transform.rotation);
+        }   
         isEnemyDeath = true;
         Destroy(gameObject,5);
         
