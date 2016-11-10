@@ -20,6 +20,9 @@ public class PlayerManager : MonoBehaviour {
     Rigidbody2D playerRigidBody;
     GameObject GroundedTrigger;
 
+    public AudioClip playerJumpSound;
+    AudioSource audioS;
+
     bool isRobot = true;
     public bool isPlayerDeath = false;
 
@@ -39,6 +42,7 @@ public class PlayerManager : MonoBehaviour {
         isFacingRight = true;
         ProjectileFirePos = transform.FindChild("firePos");
         GroundedTrigger = GameObject.Find("GroundTrigger");
+        audioS = GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
@@ -218,6 +222,8 @@ public class PlayerManager : MonoBehaviour {
         {
             isOnTheGround = false;            
             playerRigidBody.AddForce(new Vector2(playerRigidBody.velocity.x, jumpSpeedY));
+            audioS.clip = playerJumpSound;
+            audioS.Play();
             //playerAnimator.SetInteger("State", 2);
             //animationState = 2;
             Invoke("EnablePlayerDoubleJump", 0.01f);

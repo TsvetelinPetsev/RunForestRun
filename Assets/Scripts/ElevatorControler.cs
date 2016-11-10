@@ -19,12 +19,15 @@ public class ElevatorControler : MonoBehaviour {
 
     private Transform elevatorTransform; // will hold elevator transform
 
+    AudioSource elevatorSound;
+
     void Start ()
     {
         elevatorTransform = GetComponent<Transform>(); // geting elevator transform
         elevatorStartPositionY = elevatorTransform.position.y;  // setting elevator starting position
         elevatorWhaitTimerUp = timeStayUp;                     // setting up timer 
         elevatorWhaitTimerDown = timeStayDown;                 // setting down timer 
+        elevatorSound = GetComponentInChildren<AudioSource>();
     }
 	
 	
@@ -113,7 +116,7 @@ public class ElevatorControler : MonoBehaviour {
         if (colision.gameObject.tag == "Player")
         {            
             colision.gameObject.transform.parent = gameObject.transform;
-
+            elevatorSound.Play();
         }
         
 
@@ -124,5 +127,6 @@ public class ElevatorControler : MonoBehaviour {
     {
         // if we got the colision object as a child, move him back to his place
         colision.gameObject.transform.parent = null;
+        elevatorSound.Stop();
     }
 }
